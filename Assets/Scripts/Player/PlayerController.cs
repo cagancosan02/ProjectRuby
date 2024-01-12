@@ -121,7 +121,7 @@ public class PlayerController : MonoBehaviour
 			if (_inputs.IsJumping && _jumpTimeoutDelta <= 0.0f)
 			{
 				// the square root of H * -2 * G = how much velocity needed to reach desired height
-				_verticalVelocity = Mathf.Sqrt(1.2f * -2f * _gameSettings.GetGravity());
+				_verticalVelocity = Mathf.Sqrt(1.5f * -2f * _gameSettings.GetGravity());
 			}
 
 			// jump timeout

@@ -1,8 +1,12 @@
 using UnityEngine;
+
+[System.Serializable]
 public class WeaponModel
 {
-    public GameObject Asset { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public ushort Ammo { get; set; }
+    public GameObject Asset;
+    public string Name;
+    public string Description;
+    public ushort Ammo;
+    public float FireRate;
+    public bool SingleShot;
 }
