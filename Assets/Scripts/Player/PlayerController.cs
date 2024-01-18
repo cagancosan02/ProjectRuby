@@ -47,8 +47,11 @@ public class PlayerController : MonoBehaviour
 
 	void Start()
 	{
+		Application.targetFrameRate = 60;
 		originalHeight = _characterController.height;
 		originalCenter = _characterController.center;
+
+		_inputs.OnJumpAction += JumpAction;
 	}
 
 	void Update()
@@ -64,6 +67,18 @@ public class PlayerController : MonoBehaviour
 
 		Look();
 
+	}
+
+	private void JumpAction(object sender, System.EventArgs e)
+	{
+		if (_jumpTimeoutDelta <= 0.0f)
+		{
+
+			_verticalVelocity = Mathf.Sqrt(1.5f * -2f * _gameSettings.GetGravity());
+		}
+
+		//SaveSystem.Save(_gameSettings.GetPlayerData());
+		_gameSettings.SetPlayerData(SaveSystem.Load());
 	}
 
 	//--- BASE ---//
@@ -115,13 +130,6 @@ public class PlayerController : MonoBehaviour
 			if (_verticalVelocity < 0.0f)
 			{
 				_verticalVelocity = -2f;
-			}
-
-			// Jump
-			if (_inputs.IsJumping && _jumpTimeoutDelta <= 0.0f)
-			{
-				// the square root of H * -2 * G = how much velocity needed to reach desired height
-				_verticalVelocity = Mathf.Sqrt(1.5f * -2f * _gameSettings.GetGravity());
 			}
 
 			// jump timeout

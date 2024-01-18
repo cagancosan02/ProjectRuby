@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
@@ -8,42 +9,18 @@ using UnityEngine.InputSystem;
 public class GameInput : MonoBehaviour
 {
     Inputs playerInputs;
+    public event EventHandler OnJumpAction;
+    public event EventHandler OnShootAction;
+    public event Action<int> OnSlotsAction;
 
-    public bool IsJumping
-    {
-        get
-        {
-            return _isJumping;
-        }
-    }
-
-    public bool IsSlot1
-    {
-        get
-        {
-            return _slot1;
-        }
-    }
-    public bool IsSlot2
-    {
-        get
-        {
-            return _slot2;
-        }
-    }
-    private bool _isJumping = false;
-    private bool _slot1, _slot2 = false;
     private void Awake()
     {
         playerInputs = new();
         playerInputs.Enable();
 
         playerInputs.Player.Jump.performed += Jump;
-        playerInputs.Player.Jump.canceled += Jump;
-        playerInputs.Player.Slot1.performed += Slot1;
-        playerInputs.Player.Slot1.canceled += Slot1;
-        playerInputs.Player.Slot2.performed += Slot2;
-        playerInputs.Player.Slot2.canceled += Slot2;
+        playerInputs.Player.Slots.performed += Slots;
+        playerInputs.Player.Shoot.started += Shoot;
     }
 
     public Vector2 GetLookVector()
@@ -52,6 +29,7 @@ public class GameInput : MonoBehaviour
 
         return inputVector;
     }
+
     public Vector2 GetMovementNormalized()
     {
         Vector2 inputVector = playerInputs.Player.Movement.ReadValue<Vector2>();
@@ -63,40 +41,21 @@ public class GameInput : MonoBehaviour
 
     public void Jump(InputAction.CallbackContext ctx)
     {
-        switch (ctx.phase)
-        {
-            case InputActionPhase.Performed:
-                _isJumping = true;
-                break;
-            case InputActionPhase.Canceled:
-                _isJumping = false;
-                break;
-        }
+        OnJumpAction?.Invoke(this, EventArgs.Empty);
     }
 
-    public void Slot1(InputAction.CallbackContext ctx)
+    public void Slots(InputAction.CallbackContext ctx)
     {
-        switch (ctx.phase)
-        {
-            case InputActionPhase.Performed:
-                _slot1 = true;
-                break;
-            case InputActionPhase.Canceled:
-                _slot1 = false;
-                break;
-        }
+        int slotValue = Convert.ToInt32(ctx.control.name);
+
+        OnSlotsAction?.Invoke(slotValue-1);
     }
 
-    public void Slot2(InputAction.CallbackContext ctx)
+    #region WEAPON
+    public void Shoot(InputAction.CallbackContext ctx)
     {
-        switch (ctx.phase)
-        {
-            case InputActionPhase.Performed:
-                _slot2 = true;
-                break;
-            case InputActionPhase.Canceled:
-                _slot2 = false;
-                break;
-        }
+        OnShootAction?.Invoke(this, EventArgs.Empty);
     }
+
+    #endregion
 }

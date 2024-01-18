@@ -1,11 +1,13 @@
+using UnityEngine;
+
 public class GameSettings : IGameSettings
 {
     private static GameSettings _instance;
 
-    private GameSettingsModel _gameSettings;
+    private PlayerData _playerData;
     private GameSettings()
     {
-        _gameSettings = new();
+        _playerData = new();
     }
     public static GameSettings Instance
     {
@@ -21,11 +23,21 @@ public class GameSettings : IGameSettings
 
     public void SetGravity(float value)
     {
-        _gameSettings.Gravity = value;
+        _playerData.Gravity = value;
     }
 
     public float GetGravity()
     {
-        return _gameSettings.Gravity;
+        return _playerData.Gravity;
+    }
+
+    public PlayerData GetPlayerData()
+    {
+        return _playerData;
+    }
+
+    public void SetPlayerData(PlayerData data)
+    {
+        _playerData = data;
     }
 }

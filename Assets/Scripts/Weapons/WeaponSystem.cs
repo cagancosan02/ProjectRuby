@@ -5,18 +5,23 @@ using UnityEngine;
 
 public class WeaponSystem : MonoBehaviour
 {
-    private ushort _currentWeapon = 0;
+    private int _currentWeapon = 0;
     [SerializeField] private GameInput _inputs;
     [SerializeField] private WeaponModel[] _weaponModels;
     [SerializeField] private GameObject _holder;
+    private GameSettings gameSettings = GameSettings.Instance;
 
     private float cooldownTimer = 0f;
     private float weaponSwitchCd = 1f;
     private bool canUseWeapon = true;
 
+    private void Start()
+    {
+        _inputs.OnSlotsAction += SetCurrentWeapon;
+    }
+
     private void Update()
     {
-        // Check if the cooldown period has passed
         if (!canUseWeapon)
         {
             cooldownTimer += Time.deltaTime;
@@ -27,32 +32,12 @@ public class WeaponSystem : MonoBehaviour
                 cooldownTimer = 0f;
             }
         }
-
-        // Check for input or conditions to use the weapon
-        if (canUseWeapon)
-        {
-
-            // Call the method or perform the action for the weapon
-            SetCurrentWeapon();
-
-            // Set the cooldown
-
-
-        }
     }
-    private void SetCurrentWeapon()
+    private void SetCurrentWeapon(int slotIndex)
     {
-        if (_inputs.IsSlot1)
-        {
-            _currentWeapon = 0;
-            SelectWeapon(_currentWeapon);
-        }
-
-        if (_inputs.IsSlot2)
-        {
-            _currentWeapon = 1;
-            SelectWeapon(_currentWeapon);
-        }
+        if (!canUseWeapon) return;
+        if(_currentWeapon == slotIndex) return;
+        SelectWeapon(slotIndex);
     }
 
     private void SelectWeapon(int index)
@@ -65,8 +50,8 @@ public class WeaponSystem : MonoBehaviour
             }
         }
 
-        GameObject weapon = Instantiate(_weaponModels[_currentWeapon].Asset, _holder.transform);
-
+        _currentWeapon = index;
+        Instantiate(_weaponModels[_currentWeapon].Asset, _holder.transform);
 
         canUseWeapon = false;
     }
